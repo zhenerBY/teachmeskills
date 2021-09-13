@@ -75,7 +75,7 @@ def title(phrase: str) -> str:
 
 def isdigit(phrase: str) -> bool:
     """Does the string consist only of digits?"""
-    digits = ('0','1','2','3','4','5','6','7','8','9')
+    digits = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
     control = True
     for lett in phrase:
         if lett not in digits:
@@ -96,7 +96,7 @@ def replace(phrase: str, old: str, new: str) -> str:
         control = []
         if continue1 <= 0:
             for c2 in range(lenold):
-                if lenphrase >= c1 + c2 + lenold:
+                if lenphrase >= c1 + c2 + 1:
                     if phrase_list[c1 + c2] == old_list[c2]:
                         control.append(1)
                 if sum(control) == lenold:
@@ -112,6 +112,7 @@ def replace(phrase: str, old: str, new: str) -> str:
             continue1 -= 1
     phrase_list_new = phrase_list_new + phrase_list[c3 + lenold:lenphrase]
     return ''.join(phrase_list_new)
+
 
 phrase = input('Please, input phrase')
 methods = ('upper', 'lower', 'capitalize', 'title', 'isdigit', 'replace')
