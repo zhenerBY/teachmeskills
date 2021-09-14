@@ -7,10 +7,9 @@ from functools import reduce
 def welcome_scr() -> None:
     table = (41, 41)
     print(''.center(sum(table) + len(table) + 1, '-'))
-    print('|', 'LIST OF TASKS'.center(sum(table)+1), '|', sep = '')
+    print('|', ('LIST OF TASKS'+chr(174)).center(sum(table)+1), '|', sep = '')
     print(''.center(sum(table) + len(table) + 1, '-'))
     for i, ii in enumerate(func_list):
-        # print(f'|({(" " + str(i+1) + " - " + ii[1]).ljust(table[0])}')
         print(f'|{(" " + str(i+1) + " - " + func_list[ii][1]).ljust(table[0])}', end = '')
         if i%2 == 1:
             print('|', '\n', end = '', sep = '')
@@ -32,22 +31,25 @@ def show_tasks() -> None:
             f'|{str(c1 + 1).center(table[0])}|{tsk.ljust(table[1])}|{str(task_dict[tsk]["deadline"]).center(table[2])}'
             f'|{str(task_dict[tsk]["deadline"] < date.today()).center(table[3])}|')
     print(''.center(sum(table) + len(table) + 1, '-'))
-    input('Press Enter to continue')
 
 
-def show_task_det() -> None:
+def show_task_det(taskN:str = 0) -> None:
+    if taskN == 0:
+        show_tasks()
+        N = input('Enter the task number')
+        tasks = list(map(lambda x: x, task_dict.keys()))
+        taskN =
     for c1, tsk in enumerate(task_dict):
         print(f'Task #{c1 + 1} - {tsk} :')
         for tsk2 in list(task_dict[tsk].keys()):
             print(f'      {tsk2} - {task_dict[tsk][tsk2]}')
-    input('Press Enter to continue')
 
 
 def add_task() -> None:
-    name_tmp = input('Enter name of new task :')
-    task_tmp = {}
     flag = True
+    task_tmp = {}
     while flag:
+        name_tmp = input('Enter name of new task :')
         for att in task_att:
             if att == 'created':
                 task_tmp[att] = date.today()
@@ -108,7 +110,18 @@ def delete_task() -> None:
 
 
 def search_task() -> None:
-    None
+    phrase = input('Enter your search phrase :')
+    a = set(filter(lambda x: phrase in x, task_dict))
+    b = set(filter(lambda x: phrase in task_dict[x]['description'], task_dict.keys()))
+    c = a.union(b)
+    table = (41, 41)
+    print(''.center(sum(table) + len(table) + 1, '-'))
+    print('|', ('SEARCHING RESULTS').center(sum(table)+1), '|', sep = '')
+    print(''.center(sum(table) + len(table) + 1, '-'))
+    for i, ii in enumerate(c):
+        print(f'|{(" " + str(i + 1) + " - " + ii).ljust(table[0])}', end='')
+        print('|'.rjust(table[1]+2))
+    print(''.center(sum(table) + len(table) + 1, '-'))
 
 
 # list tasks attributes
@@ -116,7 +129,7 @@ task_att = ('description', 'created', 'deadline')
 
 # list test tasks
 task_dict = {
-    'Test Task 1': {'description': 'Очень важная задача',
+    'Test Task 1!': {'description': 'Очень важная задача',
                     'created': date(2021, 9, 8), 'deadline': date(2021, 9, 9)},
     'Test Task 2': {'description': 'Очень важная задача2',
                     'created': date(2021, 8, 8), 'deadline': date(2021, 8, 9)},
@@ -126,7 +139,7 @@ task_dict = {
                'created': date(2021, 9, 9), 'deadline': date(2021, 9, 20)},
     'Торжественное открытие': {'description': 'не забыть перерезать ленточку',
                                'created': date(2021, 9, 8), 'deadline': date(2021, 10, 1)},
-    'забрать ребенка из садика': {'description': 'не напиццо',
+    'забрать ребенка из садика': {'description': 'не напиццо!',
                                   'created': date(2021, 9, 7), 'deadline': date(2021, 10, 1)}
 }
 
@@ -147,5 +160,6 @@ while action not in ('exit', 'Exit', 'x'):
         action = input('Incorrect input. Repeat. :')
     if action not in ('exit', 'Exit', 'x'):
         func_list[action][0]()
+        input('Press Enter to continue')
 
     # print('Nothing happens')
