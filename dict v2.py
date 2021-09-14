@@ -7,41 +7,41 @@ from functools import reduce
 def welcome_scr() -> None:
     table = (41, 41)
     print(''.center(sum(table) + len(table) + 1, '-'))
-    print('|', ('LIST OF TASKS'+chr(174)).center(sum(table)+1), '|', sep = '')
+    print('|', ('LIST OF TASKS' + chr(174)).center(sum(table) + 1), '|', sep='')
     print(''.center(sum(table) + len(table) + 1, '-'))
     for i, ii in enumerate(func_list):
-        print(f'|{(" " + str(i+1) + " - " + func_list[ii][1]).ljust(table[0])}', end = '')
-        if i%2 == 1:
-            print('|', '\n', end = '', sep = '')
+        print(f'|{(" " + str(i + 1) + " - " + func_list[ii][1]).ljust(table[0])}', end='')
+        if i % 2 == 1:
+            print('|', '\n', end='', sep='')
         if i + 1 == len(func_list):
-            print('|'.rjust(table[1]+2), '\n', sep = '', end = '')
+            print('|'.rjust(table[1] + 2), '\n', sep='', end='')
     print(''.center(sum(table) + len(table) + 1, '-'))
-    print('|', ' e(x)it - Exit'.ljust(sum(table)+1), '|', sep = '')
+    print('|', ' e(x)it - Exit'.ljust(sum(table) + 1), '|', sep='')
     print(''.center(sum(table) + len(table) + 1, '-'))
 
 
 def show_tasks() -> None:
     table = (3, 60, 10, 7)
     print(''.center(sum(table) + len(table) + 1, '-'))
-    print('|', '#'.center(table[0]), '| ', 'Task name'.ljust(table[1]-1), '|', 'DEADLINE'.center(table[2]),
+    print('|', '#'.center(table[0]), '| ', 'Task name'.ljust(table[1] - 1), '|', 'DEADLINE'.center(table[2]),
           '|', 'OVERDUE'.center(table[3]), '|', sep='')
     print(''.center(sum(table) + len(table) + 1, '-'))
     for c1, tsk in enumerate(task_dict):
         print(
-            f'|{str(c1 + 1).center(table[0])}| {tsk.ljust(table[1]-1)}|{str(task_dict[tsk]["deadline"]).center(table[2])}'
+            f'|{str(c1 + 1).center(table[0])}| {tsk.ljust(table[1] - 1)}|{str(task_dict[tsk]["deadline"]).center(table[2])}'
             f'|{str(task_dict[tsk]["deadline"] < date.today()).center(table[3])}|')
     print(''.center(sum(table) + len(table) + 1, '-'))
 
 
-def show_task_det(N = '0') -> None:
+def show_task_det(N='0') -> None:
     if N == '0':
         show_tasks()
         N = input('Enter the task number')
-        while N not in list(map(str, (list(range(1, len(task_dict)+1))))):
+        while N not in list(map(str, (list(range(1, len(task_dict) + 1))))):
             show_tasks()
             N = input('ERROR!!! Enter the task number')
         N = int(N)
-    task = list(task_dict.keys())[N-1]
+    task = list(task_dict.keys())[N - 1]
     print(f'Task #{N} - {task} :')
     for tsk2 in list(task_dict[task].keys()):
         print(f'      {tsk2} - {task_dict[task][tsk2]}')
@@ -69,9 +69,12 @@ def add_task() -> None:
 
 
 def edit_task() -> None:
-    for c1, tsk in enumerate(task_dict):
-        print(f'Task #{c1 + 1} - {tsk} :')
-    tskdel = int(input('Enter # task for modification'))
+    show_tasks()
+    tskdel = input('Enter # task for modification')
+    while tskdel not in list(map(str, (list(range(1, len(task_dict) + 1))))):
+        show_tasks()
+        tskdel = (input('Error. Reenter # task! '))
+    tskdel = int(tskdel)
     for c1, tsk in enumerate(task_dict):
         if tskdel == c1 + 1:
             tmpdict = {}
@@ -92,10 +95,7 @@ def edit_task() -> None:
 
 def rename_task() -> None:
     show_tasks()
-    # flag = True
-    # tskdel = int(input('Enter # task for rename'))
     tskdel = (input('Enter # task for rename'))
-    # while flag:
     while tskdel not in list(map(str, (list(range(1, len(task_dict) + 1))))):
         show_tasks()
         tskdel = (input('Error. Reenter # task! '))
@@ -124,15 +124,15 @@ def search_task() -> None:
     c = a.union(b)
     table = (3, 60, 10, 7)
     print(''.center(sum(table) + len(table) + 1, '-'))
-    print('|', ('SEARCHING RESULTS').center(sum(table)+3), '|', sep = '')
+    print('|', ('SEARCHING RESULTS').center(sum(table) + 3), '|', sep='')
     print(''.center(sum(table) + len(table) + 1, '-'))
-    print('|', '#'.center(table[0]), '| ', 'Task name'.ljust(table[1]-1), '|', 'DEADLINE'.center(table[2]),
+    print('|', '#'.center(table[0]), '| ', 'Task name'.ljust(table[1] - 1), '|', 'DEADLINE'.center(table[2]),
           '|', 'OVERDUE'.center(table[3]), '|', sep='')
     print(''.center(sum(table) + len(table) + 1, '-'))
     filtr_list = []
     for c1, tsk in enumerate(c):
         print(
-            f'|{str(c1 + 1).center(table[0])}| {tsk.ljust(table[1]-1)}|{str(task_dict[tsk]["deadline"]).center(table[2])}'
+            f'|{str(c1 + 1).center(table[0])}| {tsk.ljust(table[1] - 1)}|{str(task_dict[tsk]["deadline"]).center(table[2])}'
             f'|{str(task_dict[tsk]["deadline"] < date.today()).center(table[3])}|')
         filtr_list.append(tsk)
     print(''.center(sum(table) + len(table) + 1, '-'))
@@ -140,7 +140,7 @@ def search_task() -> None:
         ans = input('Do you want see task description? (Y)es, (N)o :')
         if ans in 'yY':
             ans_num = int(input('Enter task number :'))
-            while ans_num not in range(1, len(filtr_list)+1):
+            while ans_num not in range(1, len(filtr_list) + 1):
                 ans_num = int(input('Error!! Enter task number :'))
             show_task_det(list(task_dict.keys()).index(filtr_list[ans_num - 1]))
     else:
@@ -150,13 +150,13 @@ def search_task() -> None:
 def overdue_sort_task() -> None:
     table = (3, 60, 10, 7)
     print(''.center(sum(table) + len(table) + 1, '-'))
-    print('|', '#'.center(table[0]), '| ', 'Task name'.ljust(table[1]-1), '|', 'DEADLINE'.center(table[2]),
+    print('|', '#'.center(table[0]), '| ', 'Task name'.ljust(table[1] - 1), '|', 'DEADLINE'.center(table[2]),
           '|', 'OVERDUE'.center(table[3]), '|', sep='')
     print(''.center(sum(table) + len(table) + 1, '-'))
-    sort = sorted(task_dict, key = lambda x: task_dict[x]['deadline'])
+    sort = sorted(task_dict, key=lambda x: task_dict[x]['deadline'])
     for c1, tsk in enumerate(sort):
         print(
-            f'|{str(c1 + 1).center(table[0])}| {tsk.ljust(table[1]-1)}|{str(task_dict[tsk]["deadline"]).center(table[2])}'
+            f'|{str(c1 + 1).center(table[0])}| {tsk.ljust(table[1] - 1)}|{str(task_dict[tsk]["deadline"]).center(table[2])}'
             f'|{str(task_dict[tsk]["deadline"] < date.today()).center(table[3])}|')
     print(''.center(sum(table) + len(table) + 1, '-'))
 
@@ -164,13 +164,14 @@ def overdue_sort_task() -> None:
 def reserve():
     None
 
+
 # list tasks attributes
 task_att = ('description', 'created', 'deadline')
 
 # list test tasks
 task_dict = {
     'Test Task 1!': {'description': 'Очень важная задача  ',
-                    'created': date(2021, 9, 8), 'deadline': date(2021, 9, 9)},
+                     'created': date(2021, 9, 8), 'deadline': date(2021, 9, 9)},
     'Test Task 2': {'description': 'Очень важная задача2 ',
                     'created': date(2021, 8, 8), 'deadline': date(2021, 8, 9)},
     'Test Task 3': {'description': 'Очень важная задача3',
