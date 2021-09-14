@@ -5,25 +5,33 @@ from functools import reduce
 
 
 def welcome_scr() -> None:
-    print('|----------------------------------------------------------------|')
-    print('|                     LIST OF TASKS                              |')
-    print('|----------------------------------------------------------------|')
-    print('| 1 - Show tasks list                                            |')
-    print('| 2 - Show task details                                          |')
-    print('| 3 - Add task                                                   |')
-    print('| 4 - Edit task                                                  |')
-    print('| 5 - Rename task                                                |')
-    print('| 6 - Delete task                                                |')
-    print('|----------------------------------------------------------------|')
-    print('|----------------------------------------------------------------|')
-    print('| e(x)it - Exit                                                  |')
-    print('|----------------------------------------------------------------|')
+    table = (41, 41)
+    print(''.center(sum(table) + len(table) + 1, '-'))
+    print('|', 'LIST OF TASKS'.center(sum(table)+1), '|', sep = '')
+    print(''.center(sum(table) + len(table) + 1, '-'))
+    for i, ii in enumerate(func_list):
+        # print(f'|({(" " + str(i+1) + " - " + ii[1]).ljust(table[0])}')
+        print(f'|{(" " + str(i+1) + " - " + func_list[ii][1]).ljust(table[0])}', end = '')
+        if i%2 == 1:
+            print('|', '\n', end = '', sep = '')
+        if i + 1 == len(func_list):
+            print('|'.rjust(table[1]+2), '\n', sep = '', end = '')
+    print(''.center(sum(table) + len(table) + 1, '-'))
+    print('|', ' e(x)it - Exit'.ljust(sum(table)+1), '|', sep = '')
+    print(''.center(sum(table) + len(table) + 1, '-'))
 
 
 def show_tasks() -> None:
+    table = (3, 60, 10, 7)
+    print(''.center(sum(table) + len(table) + 1, '-'))
+    print('|', '#'.center(table[0]), '|', 'Task name'.center(table[1]), '|', 'DEADLINE'.center(table[2]),
+          '|', 'OVERDUE'.center(table[3]), '|', sep='')
+    print(''.center(sum(table) + len(table) + 1, '-'))
     for c1, tsk in enumerate(task_dict):
-        print(f'Task #{c1 + 1} - {tsk} : DEADLINE - {task_dict[tsk]["deadline"]}'
-              f' : OVERDUE - {task_dict[tsk]["deadline"] < date.today()}')
+        print(
+            f'|{str(c1 + 1).center(table[0])}|{tsk.ljust(table[1])}|{str(task_dict[tsk]["deadline"]).center(table[2])}'
+            f'|{str(task_dict[tsk]["deadline"] < date.today()).center(table[3])}|')
+    print(''.center(sum(table) + len(table) + 1, '-'))
     input('Press Enter to continue')
 
 
@@ -98,7 +106,12 @@ def delete_task() -> None:
             break
     task_dict.pop(tsk)
 
-#list tasks attributes
+
+def search_task() -> None:
+    None
+
+
+# list tasks attributes
 task_att = ('description', 'created', 'deadline')
 
 # list test tasks
@@ -117,12 +130,14 @@ task_dict = {
                                   'created': date(2021, 9, 7), 'deadline': date(2021, 10, 1)}
 }
 
-func_list = {'1': show_tasks,
-             '2': show_task_det,
-             '3': add_task,
-             '4': edit_task,
-             '5': rename_task,
-             '6': delete_task}
+func_list = {'1': (show_tasks, 'Show tasks list'),
+             '2': (show_task_det, 'Show task details'),
+             '3': (add_task, 'Add task'),
+             '4': (edit_task, 'Edit task'),
+             '5': (rename_task, 'Rename task'),
+             '6': (delete_task, 'Delete task'),
+             '7': (search_task, 'Search for a task'),
+             }
 
 action = 0
 while action not in ('exit', 'Exit', 'x'):
@@ -131,8 +146,6 @@ while action not in ('exit', 'Exit', 'x'):
     while action not in func_list and action not in ('exit', 'Exit', 'x'):
         action = input('Incorrect input. Repeat. :')
     if action not in ('exit', 'Exit', 'x'):
-        func_list[action]()
-
-
+        func_list[action][0]()
 
     # print('Nothing happens')
