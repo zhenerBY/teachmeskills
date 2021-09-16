@@ -33,16 +33,17 @@ def show_tasks() -> None:
     print(''.center(sum(table) + len(table) + 1, '-'))
 
 
-def show_task_det(N='0') -> None:
-    if N == '0':
+def show_task_det(task:str = '0') -> None:
+    if task == '0':
         show_tasks()
-        N = input('Enter the task number')
-        while N not in list(map(str, (list(range(1, len(task_dict) + 1))))):
+        task = input('Enter the task number')
+        while task not in list(map(str, (list(range(1, len(task_dict) + 1))))):
             show_tasks()
-            N = input('ERROR!!! Enter the task number')
-        N = int(N)
-    task = list(task_dict.keys())[N - 1]
-    print(f'Task #{N} - {task} :')
+            task = input('ERROR!!! Enter the task number')
+        # N = list(task_dict.keys())[int(N)-1}
+        task = list(task_dict.keys())[int(task) - 1]
+    # print(f'Task #{N} - {task} :')
+    print(f'Task Name - {task} :')
     for tsk2 in list(task_dict[task].keys()):
         print(f'      {tsk2} - {task_dict[task][tsk2]}')
 
@@ -51,7 +52,9 @@ def add_task() -> None:
     flag = True
     task_tmp = {}
     while flag:
-        name_tmp = input('Enter name of new task :')
+        name_tmp = input('Enter name of new task, or Enter to cancel :')
+        if tskdel == '':
+            break
         for att in task_att:
             if att == 'created':
                 task_tmp[att] = date.today()
@@ -70,51 +73,53 @@ def add_task() -> None:
 
 def edit_task() -> None:
     show_tasks()
-    tskdel = input('Enter # task for modification')
-    while tskdel not in list(map(str, (list(range(1, len(task_dict) + 1))))):
-        show_tasks()
-        tskdel = (input('Error. Reenter # task! '))
-    tskdel = int(tskdel)
-    for c1, tsk in enumerate(task_dict):
-        if tskdel == c1 + 1:
-            tmpdict = {}
-            tmpkey = tsk
-            for i, ii in enumerate(task_dict[tsk]):
-                print(f'{i + 1} - {ii} - {task_dict[tsk][ii]}')
-                tmpdict[i + 1] = ii
-    item = int(input(f'Enter # of property {tmpdict} to change :'))
-    for i, ii in enumerate(task_dict[tmpkey]):
-        if i + 1 == item:
-            tmpkey2 = ii
-    item_ch = input(f'"{task_dict[tmpkey][tmpkey2]}" replace with : ')
-    if tmpkey2 == 'created' or tmpkey2 == "deadline":
-        task_dict[tmpkey][tmpkey2] = datetime.strptime(item_ch, "%Y-%m-%d").date()
-    else:
-        task_dict[tmpkey][tmpkey2] = item_ch
+    tskdel = input('Enter # task for modification, or Enter to cancel :')
+    if tskdel != '':
+        while tskdel not in list(map(str, (list(range(1, len(task_dict) + 1))))):
+            show_tasks()
+            tskdel = (input('Error. Reenter # task! '))
+        tskdel = int(tskdel)
+        for c1, tsk in enumerate(task_dict):
+            if tskdel == c1 + 1:
+                tmpdict = {}
+                tmpkey = tsk
+                for i, ii in enumerate(task_dict[tsk]):
+                    print(f'{i + 1} - {ii} - {task_dict[tsk][ii]}')
+                    tmpdict[i + 1] = ii
+        item = int(input(f'Enter # of property {tmpdict} to change :'))
+        for i, ii in enumerate(task_dict[tmpkey]):
+            if i + 1 == item:
+                tmpkey2 = ii
+        item_ch = input(f'"{task_dict[tmpkey][tmpkey2]}" replace with : ')
+        if tmpkey2 == 'created' or tmpkey2 == "deadline":
+            task_dict[tmpkey][tmpkey2] = datetime.strptime(item_ch, "%Y-%m-%d").date()
+        else:
+            task_dict[tmpkey][tmpkey2] = item_ch
 
 
 def rename_task() -> None:
     show_tasks()
-    tskdel = (input('Enter # task for rename'))
-    while tskdel not in list(map(str, (list(range(1, len(task_dict) + 1))))):
-        show_tasks()
-        tskdel = (input('Error. Reenter # task! '))
-    tskdel = int(tskdel)
-    for c1, tsk in enumerate(task_dict):
-        if tskdel == c1 + 1:
-            break
-    tskren = input(f'Enter new name for "{tsk}"')
-    task_dict[tskren] = task_dict.pop(tsk)
+    tskdel = input('Enter # task for rename, or Enter to cancel :')
+    if tskdel != '':
+        while tskdel not in list(map(str, (list(range(1, len(task_dict) + 1))))):
+            show_tasks()
+            tskdel = (input('Error. Reenter # task! '))
+        tskdel = int(tskdel)
+        for c1, tsk in enumerate(task_dict):
+            if tskdel == c1 + 1:
+                break
+        tskren = input(f'Enter new name for "{tsk}"')
+        task_dict[tskren] = task_dict.pop(tsk)
 
 
 def delete_task() -> None:
-    for c1, tsk in enumerate(task_dict):
-        print(f'Task #{c1 + 1} - {tsk} :')
-    tskdel = int(input('Enter # tas for delete'))
-    for c1, tsk in enumerate(task_dict):
-        if tskdel == c1 + 1:
-            break
-    task_dict.pop(tsk)
+    show_tasks()
+    tskdel = input('Enter # tas for delete, or Enter to cancel :')
+    if tskdel != '':
+        for c1, tsk in enumerate(task_dict):
+            if int(tskdel) == c1 + 1:
+                break
+        task_dict.pop(tsk)
 
 
 def search_task() -> None:
@@ -142,7 +147,8 @@ def search_task() -> None:
             ans_num = int(input('Enter task number :'))
             while ans_num not in range(1, len(filtr_list) + 1):
                 ans_num = int(input('Error!! Enter task number :'))
-            show_task_det(list(task_dict.keys()).index(filtr_list[ans_num - 1]))
+            # show_task_det(list(task_dict.keys()).index(filtr_list[ans_num - 1]))
+            show_task_det(filtr_list[ans_num - 1])
     else:
         print('Nothing found !')
 
