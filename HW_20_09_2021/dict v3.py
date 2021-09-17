@@ -2,7 +2,6 @@ from datetime import datetime, date, timedelta
 import json
 from functools import reduce
 
-
 def json_date_to_iso(obj):
     """JSON serializer for objects datetime.date by default json code"""
     if isinstance(obj, (datetime, date)):
@@ -69,6 +68,8 @@ def add_task() -> None:
         name_tmp = input('Enter name of new task, or Enter to cancel :')
         if name_tmp == '':
             break
+        elif name_tmp in task_dict.keys():
+            name_tmp = input('This name already exist. Please enter another one  :')
         for att in task_att:
             if att == 'created':
                 task_tmp[att] = date.today()
