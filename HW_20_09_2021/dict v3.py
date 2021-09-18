@@ -209,6 +209,10 @@ def file_select() -> list:
         print(''.center(sum(table) + len(table) + 1, '-'))
 
     while True:
+        # проверка на существования каталога
+        if 'tasks' not in os.listdir() and not r_o:
+            os.mkdir('tasks')
+        # проверка на существования каталога
         files = os.listdir('./tasks/')
         names_list = [x[:-5] for x in files if x[-5:] == '.json']
         file_select_list()
@@ -220,37 +224,49 @@ def file_select() -> list:
         if user_action in 'xX':
             return ('', False)
         elif user_action in 'aA':
-            while True:
-                name = input("Enter new user name :")
-                name_act = input(f' "{name}" is correct ? (Y)es, (N)o :')
-                if name_act in 'Yy' and name_act != '':
-                    example = {"Task name": {"description": "Task description", "created": "2021-09-18",
-                                             "deadline": "2021-09-18"}}
-                    with open('./tasks/' + name + '.json', 'w') as f:
-                        json.dump(example, f)
-                    break
+            if not r_o:
+                while True:
+                    name = input("Enter new user name :")
+                    name_act = input(f' "{name}" is correct ? (Y)es, (N)o :')
+                    if name_act in 'Yy' and name_act != '':
+                        example = {"Task name": {"description": "Task description", "created": "2021-09-18",
+                                                 "deadline": "2021-09-18"}}
+                        with open('./tasks/' + name + '.json', 'w') as f:
+                            json.dump(example, f)
+                        break
+            else:
+                print('!!!Operation is prohibited!!!')
         elif user_action in 'dD':
-            user_action = input('Enter user NUMBER to delete :')
-            while user_action not in list(map(str, range(1, len(names_list) + 1))):
-                file_select_list()
-                user_action = input('ERROR!!!! Enter user NUMBER to delete :')
-            confirm = input(
-                f'User "{names_list[int(user_action) - 1]}" will be deleted. Are you sure? Enter user NAME: ')
-            if confirm == names_list[int(user_action) - 1]:
-                print('del file', names_list[int(user_action) - 1] + '.json')
-                os.remove('./tasks/' + names_list[int(user_action) - 1] + '.json')
+            if not r_o:
+                user_action = input('Enter user NUMBER to delete :')
+                while user_action not in list(map(str, range(1, len(names_list) + 1))):
+                    file_select_list()
+                    user_action = input('ERROR!!!! Enter user NUMBER to delete :')
+                confirm = input(
+                    f'User "{names_list[int(user_action) - 1]}" will be deleted. Are you sure? Enter user NAME: ')
+                if confirm == names_list[int(user_action) - 1]:
+                    print('del file', names_list[int(user_action) - 1] + '.json')
+                    os.remove('./tasks/' + names_list[int(user_action) - 1] + '.json')
+            else:
+                print('!!!Operation is prohibited!!!')
         elif user_action in list(map(str, range(1, len(names_list) + 1))):
             return (names_list[int(user_action) - 1], True)
 
-        print('OK')
 
 @click.command()
 # @click.option('--count', default=1, help='Number of greetings.')
-@click.option('--name', help='user file name')
-def tasks(name: str = None) -> None:
+# @click.option('--name', help="user's file name")
+# @click.option('--hash-type',
+#               type=click.Choice(['MD5', 'SHA1'], case_sensitive=False))
+@click.option('-n', 'name', help="user's file name in ./tasks/ (without extension)")
+@click.option('-r/-w', 'r__o', default=False, help="r - for read-only mode")
+def tasks(name: str = None, r__o: bool = False) -> None:
     """Main code"""
     action = 0
     continuation = True
+
+    global r_o
+    r_o = r__o
 
     if name == None:
         temp = file_select()
@@ -277,8 +293,9 @@ def tasks(name: str = None) -> None:
             elif action not in 'oO':
                 func_list[action][0]()
                 input('Press Enter to continue')
-        with open('./tasks/' + name, 'w') as file_json:
-            json.dump(task_dict, file_json, default=json_date_to_iso)
+        if not r_o:
+            with open('./tasks/' + name, 'w') as file_json:
+                json.dump(task_dict, file_json, default=json_date_to_iso)
         temp = file_select()
         continuation = temp[1]
         name = temp[0] + '.json'
@@ -310,5 +327,3 @@ func_list = {'1': (show_tasks, 'Show tasks list'),
 
 if __name__ == '__main__':
     tasks()
-
-# print('Nothing happens')
