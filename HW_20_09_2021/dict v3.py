@@ -1,11 +1,16 @@
 from datetime import datetime, date, timedelta
 import json
+import click
+import os
+import sys
 from functools import reduce
+
 
 def json_date_to_iso(obj):
     """JSON serializer for objects datetime.date by default json code"""
     if isinstance(obj, (datetime, date)):
         return obj.isoformat()
+
 
 def date_hook(json_dict):
     """JSON convert date.isoformat to datetime.date"""
@@ -29,7 +34,7 @@ def welcome_scr() -> None:
         if i + 1 == len(func_list):
             print('|'.rjust(table[1] + 2), '\n', sep='', end='')
     print(''.center(sum(table) + len(table) + 1, '-'))
-    print('|', ' e(x)it - Exit'.ljust(sum(table) + 1), '|', sep='')
+    print('|', ' L(O)GOUT - Change user      e(x)it - Exit'.ljust(sum(table) + 1), '|', sep='')
     print(''.center(sum(table) + len(table) + 1, '-'))
 
 
@@ -46,7 +51,7 @@ def show_tasks() -> None:
     print(''.center(sum(table) + len(table) + 1, '-'))
 
 
-def show_task_det(task:str = '0') -> None:
+def show_task_det(task: str = '0') -> None:
     if task == '0':
         show_tasks()
         task = input('Enter the task number')
@@ -186,9 +191,106 @@ def reserve():
     None
 
 
+def file_select() -> list:
+    def file_select_list() -> None:
+        table = (41, 41)
+        print(''.center(sum(table) + len(table) + 1, '-'))
+        print('|', ('USERS LIST').center(sum(table) + 1), '|', sep='')
+        print(''.center(sum(table) + len(table) + 1, '-'))
+        for i, ii in enumerate(names_list):
+            # print(f'|{(" " + str(i + 1) + " - " + func_list[ii][1]).ljust(table[0])}', end='')
+            print(f'|{(" " + str(i + 1) + " - " + ii).ljust(table[0])}', end='')
+            if i % 2 == 1:
+                print('|', '\n', end='', sep='')
+            if i + 1 == len(names_list):
+                print('|'.rjust(table[1] + 2), '\n', sep='', end='')
+        print(''.center(sum(table) + len(table) + 1, '-'))
+        print('|', ' (a)dd User, (d)elete User     or     E(x)it'.ljust(sum(table) + 1), '|', sep='')
+        print(''.center(sum(table) + len(table) + 1, '-'))
+
+    while True:
+        files = os.listdir('./tasks/')
+        names_list = [x[:-5] for x in files if x[-5:] == '.json']
+        file_select_list()
+        user_action = input('Enter user number, or command :')
+        while user_action not in list(map(str, range(1, len(names_list) + 1))) and user_action not in ('a', 'A', 'd',
+                                                                                                       'D', 'x', 'X'):
+            file_select_list()
+            user_action = input('ERROR!!!! Enter user number, or command :')
+        if user_action in 'xX':
+            return ('', False)
+        elif user_action in 'aA':
+            while True:
+                name = input("Enter new user name :")
+                name_act = input(f' "{name}" is correct ? (Y)es, (N)o :')
+                if name_act in 'Yy' and name_act != '':
+                    example = {"Task name": {"description": "Task description", "created": "2021-09-18",
+                                             "deadline": "2021-09-18"}}
+                    with open('./tasks/' + name + '.json', 'w') as f:
+                        json.dump(example, f)
+                    break
+        elif user_action in 'dD':
+            user_action = input('Enter user NUMBER to delete :')
+            while user_action not in list(map(str, range(1, len(names_list) + 1))):
+                file_select_list()
+                user_action = input('ERROR!!!! Enter user NUMBER to delete :')
+            confirm = input(
+                f'User "{names_list[int(user_action) - 1]}" will be deleted. Are you sure? Enter user NAME: ')
+            if confirm == names_list[int(user_action) - 1]:
+                print('del file', names_list[int(user_action) - 1] + '.json')
+                os.remove('./tasks/' + names_list[int(user_action) - 1] + '.json')
+        elif user_action in list(map(str, range(1, len(names_list) + 1))):
+            return (names_list[int(user_action) - 1], True)
+
+        print('OK')
+
+@click.command()
+# @click.option('--count', default=1, help='Number of greetings.')
+@click.option('--name', help='user file name')
+def tasks(name: str = None) -> None:
+    """Main code"""
+    action = 0
+    continuation = True
+
+    if name == None:
+        temp = file_select()
+        continuation = temp[1]
+        name = temp[0] + '.json'
+    else:
+        name = name + '.json'
+
+    global task_dict
+
+    if continuation:
+        with open('./tasks/' + name, 'r') as file_json:
+            task_dict = json.load(file_json, object_hook=date_hook)
+
+    while continuation:
+        while action not in ('o', 'O'):
+            welcome_scr()
+            action = input('Enter num of operation :')
+            while action not in func_list and action not in ('exit', 'Exit', 'x') and action not in 'oO':
+                welcome_scr()
+                action = input('Incorrect input. Repeat. :')
+            if action in ('exit', 'Exit', 'x'):
+                exit()
+            elif action not in 'oO':
+                func_list[action][0]()
+                input('Press Enter to continue')
+        with open('./tasks/' + name, 'w') as file_json:
+            json.dump(task_dict, file_json, default=json_date_to_iso)
+        temp = file_select()
+        continuation = temp[1]
+        name = temp[0] + '.json'
+        if continuation:
+            action = 'not o'
+            with open('./tasks/' + name, 'r') as file_json:
+                task_dict = json.load(file_json, object_hook=date_hook)
+
+
+
 # list tasks attributes
 task_att = ('description', 'created', 'deadline')
-
 
 func_list = {'1': (show_tasks, 'Show tasks list'),
              '2': (show_task_det, 'Show task details'),
@@ -201,20 +303,12 @@ func_list = {'1': (show_tasks, 'Show tasks list'),
              '9': (reserve, 'Not used'),
              }
 
-with open('user1.json', 'r') as file_json:
-    task_dict = json.load(file_json, object_hook=date_hook)
-action = 0
-while action not in ('exit', 'Exit', 'x'):
-    welcome_scr()
-    action = input('Enter num of operation :')
-    while action not in func_list and action not in ('exit', 'Exit', 'x'):
-        welcome_scr()
-        action = input('Incorrect input. Repeat. :')
-    if action not in ('exit', 'Exit', 'x'):
-        func_list[action][0]()
-        input('Press Enter to continue')
-with open('user1.json', 'w') as file_json:
-    json.dump(task_dict, file_json, default=json_date_to_iso)
 
 
-    # print('Nothing happens')
+
+
+
+if __name__ == '__main__':
+    tasks()
+
+# print('Nothing happens')
