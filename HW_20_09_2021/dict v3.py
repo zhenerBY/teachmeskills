@@ -289,6 +289,8 @@ def tasks(name: str = None, r__o: bool = False) -> None:
                 welcome_scr()
                 action = input('Incorrect input. Repeat. :')
             if action in ('exit', 'Exit', 'x'):
+                with open('./tasks/' + name, 'w') as file_json:
+                    json.dump(task_dict, file_json, default=json_date_to_iso)
                 exit()
             elif action not in 'oO':
                 func_list[action][0]()
