@@ -61,15 +61,18 @@ def dec_bin(n :int = 73) -> str:
     return str(n) + ''.join(n_list[::-1])
 
 
-# @bin_dec
+@bin_dec
 # чертовы рекурсии запередекорируются
+# я тебя убедю делать как надо!
 def dec_bin_rec(n :int) -> str:
-    if n == 0:
-        return '0'
-    elif n == 1:
-        return '1'
-    while n >= 2:
-        return dec_bin_rec(n//2) + str(n%2)
+    def dec_bin_rec_1(n :int) -> str:
+        if n == 0:
+            return '0'
+        elif n == 1:
+            return '1'
+        while n >= 2:
+            return dec_bin_rec_1(n//2) + str(n%2)
+    return dec_bin_rec_1(n)
 
 
 assert degree(2, 16) == 65536
