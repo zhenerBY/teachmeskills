@@ -229,8 +229,6 @@ def file_select() -> list:
                     name = input("Enter new user name :")
                     name_act = input(f' "{name}" is correct ? (Y)es, (N)o :')
                     if name_act in 'Yy' and name_act != '':
-                        example = {"Task name": {"description": "Task description", "created": "2021-09-18",
-                                                 "deadline": "2021-09-18"}}
                         with open('./tasks/' + name + '.json', 'w') as f:
                             json.dump(example, f)
                         break
@@ -272,6 +270,10 @@ def tasks(name: str = None, r__o: bool = False) -> None:
         temp = file_select()
         continuation = temp[1]
         name = temp[0] + '.json'
+    elif name not in [x[:-5] for x in os.listdir('./tasks/') if x[-5:] == '.json']:
+        name = name + '.json'
+        with open('./tasks/' + name, 'w') as f:
+            json.dump(example, f)
     else:
         name = name + '.json'
 
@@ -307,7 +309,6 @@ def tasks(name: str = None, r__o: bool = False) -> None:
                 task_dict = json.load(file_json, object_hook=date_hook)
 
 
-
 # list tasks attributes
 task_att = ('description', 'created', 'deadline')
 
@@ -322,10 +323,9 @@ func_list = {'1': (show_tasks, 'Show tasks list'),
              '9': (reserve, 'Not used'),
              }
 
-
-
-
-
+# used to create a new user
+example = {"Task name": {"description": "Task description", "created": "2021-09-18",
+                         "deadline": "2021-09-18"}}
 
 if __name__ == '__main__':
     tasks()
