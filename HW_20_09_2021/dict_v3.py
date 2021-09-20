@@ -252,10 +252,6 @@ def file_select() -> list:
 
 
 @click.command()
-# @click.option('--count', default=1, help='Number of greetings.')
-# @click.option('--name', help="user's file name")
-# @click.option('--hash-type',
-#               type=click.Choice(['MD5', 'SHA1'], case_sensitive=False))
 @click.option('-n', 'name', help="user's file name in ./tasks/ (without extension)")
 @click.option('-r/-w', 'r__o', default=False, help="r - for read-only mode")
 def tasks(name: str = None, r__o: bool = False) -> None:
@@ -278,7 +274,6 @@ def tasks(name: str = None, r__o: bool = False) -> None:
         name = name + '.json'
 
     global task_dict
-
     if continuation:
         with open('./tasks/' + name, 'r') as file_json:
             task_dict = json.load(file_json, object_hook=date_hook)
