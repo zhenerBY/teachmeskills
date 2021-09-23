@@ -1,10 +1,10 @@
 class rg:
     """Замена RANGE (tuple)"""
 
-    def __init__(self, start, stop = '@$^*fhYLu', step = '@$^*fhYLu'):
-        if stop == step and stop == '@$^*fhYLu':
+    def __init__(self, start, stop = None, step = None):
+        if stop == step and stop == None:
             stop, start, step = start, 0 , 1
-        elif step == '@$^*fhYLu':
+        elif step == None:
             step = 1
         self.start = start
         self.stop = stop
