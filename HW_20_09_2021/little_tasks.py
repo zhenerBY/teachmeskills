@@ -22,7 +22,14 @@ def lst_summ_negative(list):
         return (list[0] if list[0] < 0 else 0) + lst_summ_negative(list[1:])
 
 
-def prime_number(num: int, div = None) -> bool:
+def lst_negative(list):
+    if len(list) == 1:
+        return 1 if list[0] < 0 else 0
+    else:
+        return (1 if list[0] < 0 else 0) + lst_negative(list[1:])
+
+
+def prime_number(num: int, div=None) -> bool:
     if div is None:
         div = num - 1
     while div >= 2:
@@ -49,14 +56,14 @@ def bin_dec(fn):
 
 
 @bin_dec
-def dec_bin(n :int = 73) -> str:
+def dec_bin(n: int = 73) -> str:
     if n == 0:
         return '0'
     elif n == 1:
         return '1'
     n_list = list()
     while n >= 2:
-        n_list.append(str(n%2))
+        n_list.append(str(n % 2))
         n //= 2
     return str(n) + ''.join(n_list[::-1])
 
@@ -64,14 +71,15 @@ def dec_bin(n :int = 73) -> str:
 @bin_dec
 # чертовы рекурсии запередекорируются
 # я тебя убедю делать как надо!
-def dec_bin_rec(n :int) -> str:
-    def dec_bin_rec_1(n :int) -> str:
+def dec_bin_rec(n: int) -> str:
+    def dec_bin_rec_1(n: int) -> str:
         if n == 0:
             return '0'
         elif n == 1:
             return '1'
         while n >= 2:
-            return dec_bin_rec_1(n//2) + str(n%2)
+            return dec_bin_rec_1(n // 2) + str(n % 2)
+
     return dec_bin_rec_1(n)
 
 
