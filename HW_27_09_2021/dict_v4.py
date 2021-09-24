@@ -317,6 +317,25 @@ func_list = {'1': (show_tasks, 'Show tasks list'),
              '8': (overdue_sort_task, 'Display sorted list by DEADLINE'),
              '9': (reserve, 'Not used'),
              }
+""""sample task_dict
+{'Test Task 1!': {'description': 'Очень важная задача  ', 'created': datetime.date(2021, 9, 8),
+                  'deadline': datetime.date(2021, 9, 9)},
+ 'Test Task 2': {'description': 'Очень важная задача2 ', 'created': datetime.date(2021, 8, 8),
+                 'deadline': datetime.date(2021, 8, 9)},
+ 'Test Task 3': {'description': 'Очень важная задача3', 'created': datetime.date(2021, 8, 8),
+                 'deadline': datetime.date(2021, 10, 10)},
+ 'Meting': {'description': 'Очень важная встреча', 'created': datetime.date(2021, 9, 9),
+            'deadline': datetime.date(2021, 9, 10)},
+ 'Торжественное открытие': {'description': 'не забыть перерезать ленточку и для этого взять ножницы',
+                            'created': datetime.date(2021, 9, 8), 'deadline': datetime.date(2021, 10, 1)},
+ 'забрать ребенка из садика': {'description': 'не напиццо!', 'created': datetime.date(2021, 9, 7),
+                               'deadline': datetime.date(2021, 10, 1)},
+ 'Записываем в файл 1': {'description': 'Проверка Проверка Проверка', 'created': datetime.date(2021, 9, 17),
+                         'deadline': datetime.date(2021, 9, 18)},
+ 'test6': {'description': '6test', 'created': datetime.date(2021, 9, 18), 'deadline': datetime.date(2021, 9, 23)},
+ 'Task name': {'description': 'Task description', 'created': datetime.date(2021, 9, 18),
+               'deadline': datetime.date(2021, 9, 18)}}
+"""
 
 # used to create a new user
 example = {"Task name": {"description": "Task description", "created": "2021-09-18",
