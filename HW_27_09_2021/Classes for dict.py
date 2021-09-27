@@ -52,10 +52,10 @@ class Tasks:
     def showtasks(self, lbl=False) -> list:
         tasklist = []
         if lbl == True:
-            for task in list(self.__dict__.items())[0][1]:
+            for task in self.task_list:
                 print(task.__dict__)
         else:
-            for task in list(self.__dict__.items())[0][1]:
+            for task in self.task_list:
                 tasklist.append(task.__dict__)
             return tasklist
 
