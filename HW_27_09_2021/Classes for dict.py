@@ -1,5 +1,6 @@
 from datetime import datetime, date, timedelta
 import json
+import os
 
 
 class Task:
@@ -19,10 +20,22 @@ class Tasks:
     def __init__(self, user=None):
         self.task_list = []
         if user == None:
+            self.__user = 'Test_user'
             self.task_list.append(Task())  # пустая задача
+            self.safetasks()
         else:
-            self.opentasks(user+'.json')
+            self.__user = user
+            self.opentasks()
 
+    @property
+    def user(self):
+        return self.__user
+
+    @user.setter
+    def user(self, name):
+        os.remove('./users/' + self.__user + '.json')
+        self.__user = name
+        self.safetasks()
 
     def addtask(self, *args) -> None:
         if args == ():
@@ -46,13 +59,13 @@ class Tasks:
                 tasklist.append(task.__dict__)
             return tasklist
 
-    def opentasks(self, filename: str) -> None:
+    def opentasks(self) -> None:
         self.task_list = []
-        with open('./users/' + filename, 'r') as file_json:
+        with open('./users/' + self.__user + '.json', 'r') as file_json:
             self.addlisttasks(json.load(file_json))
 
-    def safetasks(self, filename: str) -> None:
-        with open('./users/' + filename, 'w') as file_json:
+    def safetasks(self) -> None:
+        with open('./users/' + self.__user + '.json', 'w') as file_json:
             json.dump(self.showtasks(), file_json)
 
     def sorted(self, attribute: str = 'name') -> list:
