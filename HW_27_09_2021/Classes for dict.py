@@ -74,6 +74,15 @@ class Tasks:
         sorted_second = sorted(tasklist, key=lambda x: x['name'])  # second sort by 'name'
         return sorted(sorted_second, key=lambda x: x[attribute])
 
+    def taskdone(self, taskname=None):
+        for el in self.task_list:
+            if el.name == taskname:
+                print(el)
+                print(el.__dict__)
+                el.done = True
+        return None
+
+# list(filter(lambda x: x['name'] == 'Test_task', self.task_list.__dict__))
 
 task1 = Task('Test Task 1!', 'Очень важная задача  ', '2021-09-09', '2021-09-08')
 task2 = Task('Test Task 2', 'Очень важная задача2 ', '2021-08-09', '2021-08-08')
