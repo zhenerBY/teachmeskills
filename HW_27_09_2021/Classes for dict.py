@@ -48,11 +48,11 @@ class Tasks:
 
     def opentasks(self, filename: str) -> None:
         self.task_list = []
-        with open(filename, 'r') as file_json:
+        with open('./users/' + filename, 'r') as file_json:
             self.addlisttasks(json.load(file_json))
 
     def safetasks(self, filename: str) -> None:
-        with open(filename, 'w') as file_json:
+        with open('./users/' + filename, 'w') as file_json:
             json.dump(self.showtasks(), file_json)
 
     def sorted(self, attribute: str = 'name') -> list:
