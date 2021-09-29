@@ -26,12 +26,12 @@ def set_and_val(text: str, conditions: list = None, texterr: str = None, check=F
 
 
 def table(func):
-    def wrapper(title: str, bottom_line: str, list: list):
+    def wrapper(title: str, bottom_line: str, lst: list):
         length = 90
         print(''.center(length, '-'))
         print('|', (title).center(length - 2), '|', sep='')
         print(''.center(length, '-'))
-        func(list)
+        func(lst)
         print(''.center(length, '-'))
         print('|', (bottom_line).ljust(length - 2), '|', sep='')
         print(''.center(length, '-'))
@@ -40,13 +40,16 @@ def table(func):
 
 
 @table
-def show_list(list: list) -> str:
-    for i in range(len(list)):
-        print('|', str(i + 1).center(3), '- ', list[i].ljust(38), sep='', end='')
+def show_list(lit: list):
+    for i in range(len(lit)):
+        print('|', str(i + 1).center(3), '- ', lit[i].ljust(38), sep='', end='')
         if i % 2 == 1 and i != 0:
             print(' |')
     print()
 
+
+def show_dict(dct:dict):
+    pass
 
 def user_select(name: str = None) -> str:
     if name == None:
@@ -58,13 +61,13 @@ def user_select(name: str = None) -> str:
             )
             if action in 'aA':
                 if r_o:
-                    input('!!!Operation is prohibited!!! Press any key')
+                    input('!!!Operation is prohibited!!! Press Enter')
                 else:
                     name = set_and_val("Enter the name of the new user :", check=True, checkconditions=False)
                     Tasks.adduser(name)
             if action in 'dD':
                 if r_o:
-                    input('!!!Operation is prohibited!!! Press any key')
+                    input('!!!Operation is prohibited!!! Press Enter')
                 else:
                     name = set_and_val("Enter the name NUMBER to delete :",
                                        [*list(map(str, range(1, len(Tasks.userslist()) + 1)))],
@@ -81,6 +84,17 @@ def user_select(name: str = None) -> str:
         return name
 
 
+def show_tasks():
+    pass
+
+
+def show_task_det():
+    pass
+
+
+
+
+
 @click.command()
 @click.option('-n', 'name', help="user's file name in ./users/ (without extension)")
 @click.option('-r/-w', 'r__o', default=False, help="r - for read-only mode")
@@ -89,12 +103,34 @@ def main(name: str = None, r__o: bool = False):
     r_o = r__o
     global user
     user = Tasks(user_select(name))
+    while True:
+        show_list('LIST OF TASKS' + chr(174),
+                  ' L(O)GOUT - Change user    or     E(x)it ',
+                  [func_list[x][1] for x in func_list.keys()])
+        action = set_and_val('Enter num of operation :',
+                             [*func_list.keys(), *'xXoO'])
+        print(action)
+        if action in 'xX':
+            if not r_o:
+                user.safetasks()
+            exit()
+        if action in 'oO':
+            if not r_o:
+                user.safetasks()
+            user = Tasks(user_select(name))
+        input('Press Enter to continue')
 
-    user.showtasks()
-    input()
 
-
-
+func_list = {'1': (show_tasks, 'Show tasks list'),
+             '2': (show_task_det, 'Show task details'),
+             '3': ('add_task', 'Add task'),
+             '4': ('edit_task', 'Edit task'),
+             '5': ('rename_task', 'Rename task'),
+             '6': ('delete_task', 'Delete task'),
+             '7': ('search_task', 'Search for a task'),
+             '8': ('overdue_sort_task', 'Display sorted list by DEADLINE'),
+             '9': ('reserve', 'Not used'),
+             }
 
 
 

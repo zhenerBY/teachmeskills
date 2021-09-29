@@ -126,7 +126,7 @@ class Tasks:
     def sorted(self, attribute: str = 'name') -> list:
         tasklist = []
         [tasklist.append(x.__dict__) for x in self.task_list]
-        sorted_second = sorted(tasklist, key=lambda x: x['name'])  # second sort by 'name'
+        sorted_second = sorted(tasklist, key=lambda x: x['name'])  # second sort (by 'name')
         return sorted(sorted_second, key=lambda x: x[attribute])
 
     def taskdone(self, *args: int) -> None:
