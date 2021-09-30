@@ -26,14 +26,14 @@ def set_and_val(text: str, conditions: list = None, texterr: str = None, check=F
 
 
 def table(func):
-    def wrapper(title: str, bottom_line: str, lst: list):
+    def wrapper(title: str, bottom_line: str, data):
         length = 90
         print(''.center(length, '-'))
         print('|', (title).center(length - 2), '|', sep='')
         print(''.center(length, '-'))
-        func(lst)
+        func(data)
         print(''.center(length, '-'))
-        print('|', (bottom_line).ljust(length - 2), '|', sep='')
+        print('|', (bottom_line).center(length - 2), '|', sep='')
         print(''.center(length, '-'))
 
     return wrapper
@@ -48,8 +48,9 @@ def show_list(lit: list):
     print()
 
 
-def show_dict(dct:dict):
+def show_dict(dct: dict):
     pass
+
 
 def user_select(name: str = None) -> str:
     if name == None:
@@ -84,15 +85,30 @@ def user_select(name: str = None) -> str:
         return name
 
 
-def show_tasks():
-    pass
+@table
+def show_tasks(dct: dict):
+    print('|', '#'.center(3), '- ', sep='', end='')
+    print('Task name'.center(48), sep='', end='')
+    print('Created'.center(10), '  ', sep='', end='')
+    print('Deadline'.center(10), '  ', sep='', end='')
+    print('Status'.center(11), sep='', end='')
+    print('|')
+    for num, el in enumerate(dct):
+        if el['done']:
+            status = 'completed'
+        else:
+            status = 'in progress'
+        print('|', str(num + 1).center(3), '- ', sep='', end='')
+        print(el['name'][0:48].ljust(48), sep='', end='')
+        print(el['created'].ljust(10), '  ', sep='', end='')
+        print(el['deadline'].center(10), '  ', sep='', end='')
+        print(status.center(11), sep='', end='')
+        print('|')
 
 
-def show_task_det():
-    pass
-
-
-
+def show_task_det(dct: dict):
+    show_tasks('Task list', 'You can do it all!', dct)
+    action = set_and_val('Enter task NUMBER :', list(func_list.keys()))
 
 
 @click.command()
@@ -118,6 +134,11 @@ def main(name: str = None, r__o: bool = False):
             if not r_o:
                 user.safetasks()
             user = Tasks(user_select(name))
+        if action in func_list.keys():
+            if action == '1':
+                func_list[action][0]('Task list', 'You can do it all!', user.showtasks(False))
+            if action == '2':
+                func_list[action][0](user.showtasks(False))
         input('Press Enter to continue')
 
 
@@ -131,7 +152,5 @@ func_list = {'1': (show_tasks, 'Show tasks list'),
              '8': ('overdue_sort_task', 'Display sorted list by DEADLINE'),
              '9': ('reserve', 'Not used'),
              }
-
-
 
 main()
