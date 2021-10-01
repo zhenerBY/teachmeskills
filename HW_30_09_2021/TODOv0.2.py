@@ -19,7 +19,7 @@ def set_and_val(text: str, conditions: list = None, texterr: str = None, check=F
                 value = input(f'{texterr}')
         if check:
             valuecheck = input(f'Your value is - {value}. Are you sure ? (Y)es/(N)o :')
-            if valuecheck in [*'YyNn']:
+            if valuecheck in [*'Yy'] and valuecheck != '':
                 return value
         else:
             return value
@@ -115,8 +115,10 @@ def show_tasks(lst: list) -> None:
 def show_task_det(lst: list) -> None:
     flag = True
     while flag:
-        show_tasks_table('Task list', 'Choose one!', lst)
-        action = set_and_val('Enter task NUMBER :', list(map(str, [*range(1, len(lst) + 1)])))
+        show_tasks_table('Task list', 'Choose one! or E(x)it', lst)
+        action = set_and_val('Enter task NUMBER :', list(map(str, [*range(1, len(lst) + 1), *'xX'])))
+        if action in 'xX':
+            break
         for el in lst:
             if lst[int(action) - 1]['counter'] == el['counter']:
                 show_dict(f'Task name - "{el["name"]}"', '', el)
@@ -159,13 +161,39 @@ def delete_task(lst: list) -> None:
         for i in nums:
             if lst[int(i) - 1]['counter'] == el['counter']:
                 counters.append(el['counter'])
-    action = input(f'Do you want to delete {user.shownames(*counters)} (Y)es or Enter')
+    action = input(f'Do you want to delete {user.shownames(*counters)}? (Y)es or Enter')
     if action in 'yY' and action != '':
         user.deltasks(*counters)
 
 
 def search_task(lst: list) -> None:
-    pass
+    text = input('Enter text to search for all keys or Enter to search for a single key :')
+    key = '*'
+    if text == '':
+        key = set_and_val(f'Enter key "{", ".join(user.task_list[0].__dict__.keys())}" :',
+                          user.task_list[0].__dict__.keys())
+        text = input('Enter text to search')
+    show_task_det(user.filter(text, key))
+
+
+def sort_task(lst: list) -> None:
+    key = set_and_val(f'Enter sorting key "{", ".join(user.task_list[0].__dict__.keys())}" :',
+                      user.task_list[0].__dict__.keys())
+    show_tasks_table(f'Sorted Task list by {key}', f'--{key}--', user.sorted(key))
+
+
+def done_task(lst: list) -> None:
+    show_tasks_table('Task list', 'Select a task to mark', lst)
+    nums = input('Enter task NUMBER or NUMBERS (num1,num2,...):')
+    nums = list(map(int, nums.replace(' ', '').split(sep=',')))
+    counters = []
+    for el in lst:
+        for i in nums:
+            if lst[int(i) - 1]['counter'] == el['counter']:
+                counters.append(el['counter'])
+    action = input(f'Do you want to mark {user.shownames(*counters)} as completed? (Y)es or Enter')
+    if action in 'yY' and action != '':
+        user.taskdone(*counters)
 
 
 @click.command()
@@ -190,18 +218,9 @@ def main(name: str = None, r__o: bool = False):
         if action in 'oO':
             if not r_o:
                 user.safetasks()
-            user = Tasks(user_select(name))
+            user = Tasks(user_select())
         if action in func_list.keys():
-            if action == '1':
-                func_list[action][0](user.showtasks(False))
-            if action == '2':
-                func_list[action][0](user.showtasks(False))
-            if action == '3':
-                func_list[action][0](user.showtasks(False))
-            if action == '4':
-                func_list[action][0](user.showtasks(False))
-            if action == '5':
-                func_list[action][0](user.showtasks(False))
+            func_list[action][0](user.showtasks(False))
         input('Press Enter to continue')
 
 
@@ -211,8 +230,8 @@ func_list = {'1': (show_tasks, 'Show tasks list'),
              '4': (edit_task, 'Edit task'),
              '5': (delete_task, 'Delete task'),
              '6': (search_task, 'Search for a task'),
-             '7': ('overdue_sort_task', 'Display sorted list by DEADLINE'),
-             '8': ('reserve', 'Not used'),
+             '7': (sort_task, 'Display sorted list'),
+             '8': (done_task, 'Mark task as completed'),
              }
 
 main()

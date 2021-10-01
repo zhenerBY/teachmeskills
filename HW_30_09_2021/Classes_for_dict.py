@@ -25,6 +25,10 @@ class Task:
     def att2create():
         return [['name', 'Name'], ['description', 'Description'], ['deadline', 'deadline - "YYYY-MM-DD']]
 
+    @staticmethod
+    def att():
+        return ['name', 'description', 'created', 'deadline']
+
     def attributes(self) -> list:
         att = list(self.__dict__.keys())
         att.remove('counter')
@@ -64,8 +68,13 @@ class Tasks:
     def adduser(name: str):
         newuser = Task().__dict__
         newuser.pop('counter')
-        with open('./users/' + name + '.json', 'w') as f:
-            json.dump([newuser], f)
+        try:
+            with open('./users/' + name + '.json', 'w') as f:
+                json.dump([newuser], f)
+        except FileNotFoundError:
+            os.mkdir('users')
+            with open('./users/' + name + '.json', 'w') as f:
+                json.dump([newuser], f)
 
     @staticmethod
     def deluser(name: str):
@@ -159,7 +168,7 @@ class Tasks:
             if el.counter in args:
                 el.done = True
 
-    def filter(self, key: str, text: str) -> list:
+    def filter(self, text: str, key: str = '*') -> list:
         '''Выводит отсортированный список
         use key - '*' for search in all keys except "counter" and "done" '''
         if key != '*':
