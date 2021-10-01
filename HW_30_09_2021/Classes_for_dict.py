@@ -22,14 +22,26 @@ class Task:
         return cls.counter + 1
 
     @staticmethod
-    def att():
-        return ['name', 'description', 'created', 'deadline']
+    def att2create():
+        return [['name', 'Name'], ['description', 'Description'], ['deadline', 'deadline - "YYYY-MM-DD']]
 
     def attributes(self) -> list:
         att = list(self.__dict__.keys())
         att.remove('counter')
         att.remove('done')
         return att
+
+    def edit(self, name=None, description=None,
+             deadline=None,
+             created=None):
+        if name != None:
+            self.name = name
+        if description != None:
+            self.description = description
+        if deadline != None:
+            self.deadline = deadline
+        if created != None:
+            self.created = created
 
 
 class Tasks:
@@ -74,11 +86,11 @@ class Tasks:
         self.__user = name
         self.opentasks()
 
-    def addtask(self, *args) -> None:
-        if args == ():
+    def addtask(self, *args, **kwargs) -> None:
+        if args == () and kwargs == {}:
             pass
         else:
-            self.task_list.append(Task(*args))
+            self.task_list.append(Task(*args, **kwargs))
 
     def addlisttasks(self, tasks: list):
         for el in tasks:
@@ -87,11 +99,14 @@ class Tasks:
     def deltasks(self, *args: int) -> None:
         ''' args this is Task counters
         '''
-        tmp = []
-        for el in self.task_list:
-            if el.counter not in args:
-                tmp.append(el)
-        self.task_list = tmp.copy()
+        for num, el in enumerate(self.task_list):
+            if el.counter in args:
+                self.task_list.pop(num)
+
+    def edittask(self, counter: int, **kwargs) -> None:
+        for i in self.task_list:
+            if i.counter == counter:
+                i.edit(**kwargs)
 
     def showtasks(self, lbl=True) -> list:
         tasklist = []
@@ -102,6 +117,16 @@ class Tasks:
             for task in self.task_list:
                 tasklist.append(task.__dict__)
             return tasklist
+
+    def shownames(self, *args) -> list:
+        ''' *args - counters
+        return list of names
+        '''
+        nameslist = []
+        for task in self.task_list:
+            if task.counter in args:
+                nameslist.append(task.name)
+        return nameslist
 
     def tasks2save(self) -> list:
         tasklist = []
@@ -148,16 +173,3 @@ class Tasks:
 
     def test(self):
         print(self.task_list)
-
-
-task1 = Task('Test Task 1!', 'Очень важная задача  ', '2021-09-09', '2021-09-08')
-task2 = Task('Test Task 2', 'Очень важная задача2 ', '2021-08-09', '2021-08-08')
-task3 = Task('Test Task 3', 'Очень важная задача3', '2021-10-10', '2021-08-08')
-task4 = Task('Торжественное открытие', 'не забыть перерезать ленточку и для этого взять ножницы', '2021-10-01',
-             '2021-09-08')
-a = Tasks()
-a.addtask('123', '321', '2021-10-10')
-a.addtask('1123', '1321', '2021-10-09')
-a.addtask('11123', '1321111', '2021-10-11')
-a.addtask('Торжественное открытие', 'не забыть перерезать ленточку и для этого взять ножницы', '2021-10-01',
-          '2021-09-08')

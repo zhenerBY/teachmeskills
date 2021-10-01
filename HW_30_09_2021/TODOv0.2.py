@@ -1,4 +1,4 @@
-from Classes_for_dict import Task, Tasks, a
+from Classes_for_dict import Task, Tasks
 import click
 
 
@@ -48,8 +48,10 @@ def show_list(lit: list):
     print()
 
 
+@table
 def show_dict(dct: dict):
-    pass
+    for el in dct:
+        print('| ', el.ljust(15), ' - ', str(dct[el]).ljust(68), ' |', sep='')
 
 
 def user_select(name: str = None) -> str:
@@ -86,14 +88,14 @@ def user_select(name: str = None) -> str:
 
 
 @table
-def show_tasks(dct: dict):
+def show_tasks_table(lst: list) -> None:
     print('|', '#'.center(3), '- ', sep='', end='')
     print('Task name'.center(48), sep='', end='')
     print('Created'.center(10), '  ', sep='', end='')
     print('Deadline'.center(10), '  ', sep='', end='')
     print('Status'.center(11), sep='', end='')
     print('|')
-    for num, el in enumerate(dct):
+    for num, el in enumerate(lst):
         if el['done']:
             status = 'completed'
         else:
@@ -106,9 +108,64 @@ def show_tasks(dct: dict):
         print('|')
 
 
-def show_task_det(dct: dict):
-    show_tasks('Task list', 'You can do it all!', dct)
-    action = set_and_val('Enter task NUMBER :', list(func_list.keys()))
+def show_tasks(lst: list) -> None:
+    show_tasks_table('Task list', 'You can do it all!', lst)
+
+
+def show_task_det(lst: list) -> None:
+    flag = True
+    while flag:
+        show_tasks_table('Task list', 'Choose one!', lst)
+        action = set_and_val('Enter task NUMBER :', list(map(str, [*range(1, len(lst) + 1)])))
+        for el in lst:
+            if lst[int(action) - 1]['counter'] == el['counter']:
+                show_dict(f'Task name - "{el["name"]}"', '', el)
+        action = input('Do you want to see another Task ? (Y)es or Enter :')
+        if action not in 'yY' or action == '':
+            flag = False
+
+
+def add_task(lst: list) -> None:
+    flag = True
+    while flag:
+        newtask = {}
+        for el in Task.att2create():
+            newtask[el[0]] = input(f'Enter {el[1]} :')
+        show_dict(f'Task name - "{newtask["name"]}"', '', newtask)
+        action = input('This is right? ? (Y)es or Enter :')
+        if action in 'yY':
+            flag = False
+    user.addtask(**newtask)
+
+
+def edit_task(lst: list) -> None:
+    show_tasks_table('Task list', 'Select a task to edit', lst)
+    action = set_and_val('Enter task NUMBER :', list(map(str, [*range(1, len(lst) + 1)])))
+    for el in lst:
+        if lst[int(action) - 1]['counter'] == el['counter']:
+            show_dict(f'Task name - "{el["name"]}"', '', el)
+            counter = el['counter']
+    key = set_and_val('Enter the key :', user.task_list[0].__dict__.keys())
+    value = set_and_val('Enter new text/value', checkconditions=False, check=True)
+    user.edittask(counter, **{key: value})
+
+
+def delete_task(lst: list) -> None:
+    show_tasks_table('Task list', 'Select a task to delete', lst)
+    nums = input('Enter task NUMBER or NUMBERS (num1,num2,...):')
+    nums = list(map(int, nums.replace(' ', '').split(sep=',')))
+    counters = []
+    for el in lst:
+        for i in nums:
+            if lst[int(i) - 1]['counter'] == el['counter']:
+                counters.append(el['counter'])
+    action = input(f'Do you want to delete {user.shownames(*counters)} (Y)es or Enter')
+    if action in 'yY' and action != '':
+        user.deltasks(*counters)
+
+
+def search_task(lst: list) -> None:
+    pass
 
 
 @click.command()
@@ -136,21 +193,26 @@ def main(name: str = None, r__o: bool = False):
             user = Tasks(user_select(name))
         if action in func_list.keys():
             if action == '1':
-                func_list[action][0]('Task list', 'You can do it all!', user.showtasks(False))
+                func_list[action][0](user.showtasks(False))
             if action == '2':
+                func_list[action][0](user.showtasks(False))
+            if action == '3':
+                func_list[action][0](user.showtasks(False))
+            if action == '4':
+                func_list[action][0](user.showtasks(False))
+            if action == '5':
                 func_list[action][0](user.showtasks(False))
         input('Press Enter to continue')
 
 
 func_list = {'1': (show_tasks, 'Show tasks list'),
              '2': (show_task_det, 'Show task details'),
-             '3': ('add_task', 'Add task'),
-             '4': ('edit_task', 'Edit task'),
-             '5': ('rename_task', 'Rename task'),
-             '6': ('delete_task', 'Delete task'),
-             '7': ('search_task', 'Search for a task'),
-             '8': ('overdue_sort_task', 'Display sorted list by DEADLINE'),
-             '9': ('reserve', 'Not used'),
+             '3': (add_task, 'Add task'),
+             '4': (edit_task, 'Edit task'),
+             '5': (delete_task, 'Delete task'),
+             '6': (search_task, 'Search for a task'),
+             '7': ('overdue_sort_task', 'Display sorted list by DEADLINE'),
+             '8': ('reserve', 'Not used'),
              }
 
 main()
