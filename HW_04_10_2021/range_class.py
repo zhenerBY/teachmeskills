@@ -23,10 +23,10 @@ class rg:
             else:
                 stop = self.__getitem__(index.stop)
             if index.step == None:
-                step = self.step
+                step = 1
             else:
                 step = index.step
-            return print(start, stop, self.step * step)
+            return rg(start, stop, self.step * step)
         else:
             if index > self.__len__() - 1:
                 raise ValueError("range object index out of range")
